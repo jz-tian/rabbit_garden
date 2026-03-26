@@ -1114,7 +1114,15 @@
   });
 
   // 各品种垂直对齐偏移
-  const OFFSETS = {
+  const OFFSETS_DESKTOP = {
+    'flemish-giant':    -31,
+    'lionhead':         -36,
+    'holland-lop':      -51,
+    'angora':           -49,
+    'harlequin':        -46,
+    'netherland-dwarf': -29,
+  };
+  const OFFSETS_MOBILE = {
     'flemish-giant':    -21,
     'lionhead':         -27,
     'holland-lop':      -31,
@@ -1122,15 +1130,20 @@
     'harlequin':        -27,
     'netherland-dwarf': -17,
   };
-  document.querySelectorAll('.rabbit').forEach(el => {
-    el.style.setProperty('--align-offset', `${OFFSETS[el.dataset.breed] ?? 0}px`);
-  });
+  function applyOffsets() {
+    const map = window.innerWidth <= 600 ? OFFSETS_MOBILE : OFFSETS_DESKTOP;
+    document.querySelectorAll('.rabbit').forEach(el => {
+      el.style.setProperty('--align-offset', `${map[el.dataset.breed] ?? 0}px`);
+    });
+  }
+  applyOffsets();
+  window.addEventListener('resize', applyOffsets);
 
   // ── Align Tool (disabled) ────────────────────────────
   if (false) (function() {
     const breeds = ['flemish-giant','lionhead','holland-lop','angora','harlequin','netherland-dwarf'];
     const labels = {'flemish-giant':'Flemish Giant','lionhead':'Lionhead','holland-lop':'Holland Lop','angora':'Angora','harlequin':'Harlequin','netherland-dwarf':'Netherland Dwarf'};
-    const offsets = Object.assign({}, OFFSETS);
+    const offsets = Object.assign({}, window.innerWidth <= 600 ? OFFSETS_MOBILE : OFFSETS_DESKTOP);
 
     function applyOffset(breed) {
       const el = document.querySelector(`.rabbit[data-breed="${breed}"]`);
