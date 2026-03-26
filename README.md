@@ -2,6 +2,8 @@
 
 A single-page interactive encyclopedia of rabbit breeds, built with vanilla HTML/CSS/JS. Click any rabbit to learn about their origin, temperament, and care requirements.
 
+**Live demo:** [rabbit-garden.vercel.app](https://rabbit-garden.vercel.app)
+
 ---
 
 ## Features
