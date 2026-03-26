@@ -4,6 +4,8 @@ A single-page interactive encyclopedia of rabbit breeds, built with vanilla HTML
 
 **Live demo:** [rabbit-garden.vercel.app](https://rabbit-garden.vercel.app)
 
+![Rabbit Garden demo](assets/rabbit_garden.gif)
+
 ---
 
 ## Features
