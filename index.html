@@ -245,6 +245,12 @@
       z-index: 4;
       box-shadow: inset 0 2px 5px rgba(0,0,0,0.07);
     }
+    .ledge-2 {
+      display: none; /* desktop: hidden */
+    }
+    .hero-base-mid {
+      display: none; /* desktop: hidden */
+    }
 
     /* ── BELOW HERO ───────────────────────────────────── */
     .below {
@@ -599,6 +605,92 @@
       from { transform: translateY(0);    }
       to   { transform: translateY(100%); }
     }
+
+    /* ── RESPONSIVE ─────────────────────────────────── */
+
+    /* Tablet — stack breed sections */
+    @media (max-width: 860px) {
+      .bs-inner,
+      .breed-section:nth-child(even) .bs-inner {
+        flex-direction: column;
+        gap: 2.4rem;
+      }
+      .bs-photos {
+        flex: none;
+        width: 100%;
+        height: clamp(280px, 56vw, 420px);
+      }
+      .bs-info { width: 100%; }
+      .bs-desc { max-width: 100%; }
+      .bs-number { font-size: clamp(5rem, 18vw, 9rem); }
+      .breed-section { padding: clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 4rem); }
+    }
+
+    /* Mobile — 3×2 rabbit grid + tighter layout */
+    @media (max-width: 600px) {
+      /* Rabbit row — 3 per row, 2 rows */
+      .rabbit-row {
+        flex-wrap: wrap;
+        justify-content: center;
+        bottom: 78px;
+        padding: 0 8px;
+        gap: 0;
+      }
+      .rabbit {
+        flex: 0 0 33.33%;
+      }
+      .rabbit img.photo {
+        height: clamp(120px, 19vh, 170px);
+      }
+
+      /* Ledge + base scaled down */
+      .hero-base  { height: 68px; }
+      .ledge      { bottom: 60px; height: 18px; }
+
+      /* Second ledge — sits at the bottom of the top row */
+      .ledge-2 {
+        display: block;
+        bottom: calc(60px + clamp(120px, 19vh, 170px));
+        height: 18px;
+      }
+
+      /* Cream fill between the two ledges */
+      .hero-base-mid {
+        display: block;
+        position: absolute;
+        bottom: 78px; /* = ledge-1 bottom (60) + ledge-1 height (18) */
+        left: 0; right: 0;
+        height: clamp(120px, 19vh, 170px);
+        background: var(--cream);
+        z-index: 1;
+      }
+
+      /* Title — push down towards the middle */
+      .title-wrap { padding-top: clamp(6rem, 26vh, 12rem); }
+
+      /* Breed labels hidden (no hover on touch) */
+      .breed-label { display: none; }
+
+      /* Photo grid shorter */
+      .bs-photos { height: clamp(220px, 64vw, 340px); }
+
+      /* Tighter section padding */
+      .breed-section { padding: 2.6rem 1.2rem; }
+
+      /* Stats grid */
+      .bs-stats { gap: 0.8em 1.4em; }
+    }
+
+    /* Very small screens */
+    @media (max-width: 380px) {
+      .rabbit img.photo   { height: clamp(100px, 17vh, 140px); }
+      .rabbit-row         { bottom: 66px; }
+      .ledge              { bottom: 50px; }
+      .ledge-2            { bottom: calc(50px + clamp(100px, 17vh, 140px)); }
+      .hero-base-mid      { bottom: 68px; height: clamp(100px, 17vh, 140px); }
+      .hero-base          { height: 58px; }
+      .bs-photos          { height: clamp(190px, 60vw, 280px); }
+    }
   </style>
 </head>
 <body>
@@ -786,6 +878,12 @@
 
   <!-- Ledge accent line -->
   <div class="ledge"></div>
+
+  <!-- Second ledge for mobile top row -->
+  <div class="ledge ledge-2"></div>
+
+  <!-- Cream fill between the two rows (mobile only) -->
+  <div class="hero-base-mid"></div>
 
 </div><!-- /.hero -->
 
@@ -1015,18 +1113,179 @@
     setTimeout(() => el.classList.add('visible'), 300 + i * 90);
   });
 
-  // 各品种垂直对齐偏移（调整完成后固定值）
+  // 各品种垂直对齐偏移
   const OFFSETS = {
-    'flemish-giant':    -31,
-    'lionhead':         -36,
-    'holland-lop':      -51,
-    'angora':           -49,
-    'harlequin':        -46,
-    'netherland-dwarf': -29,
+    'flemish-giant':    -21,
+    'lionhead':         -27,
+    'holland-lop':      -31,
+    'angora':           -29,
+    'harlequin':        -27,
+    'netherland-dwarf': -17,
   };
   document.querySelectorAll('.rabbit').forEach(el => {
     el.style.setProperty('--align-offset', `${OFFSETS[el.dataset.breed] ?? 0}px`);
   });
+
+  // ── Align Tool (disabled) ────────────────────────────
+  if (false) (function() {
+    const breeds = ['flemish-giant','lionhead','holland-lop','angora','harlequin','netherland-dwarf'];
+    const labels = {'flemish-giant':'Flemish Giant','lionhead':'Lionhead','holland-lop':'Holland Lop','angora':'Angora','harlequin':'Harlequin','netherland-dwarf':'Netherland Dwarf'};
+    const offsets = Object.assign({}, OFFSETS);
+
+    function applyOffset(breed) {
+      const el = document.querySelector(`.rabbit[data-breed="${breed}"]`);
+      if (el) el.style.setProperty('--align-offset', `${offsets[breed]}px`);
+    }
+
+    // Toggle button
+    const btn = document.createElement('button');
+    btn.textContent = '⇕ Align';
+    Object.assign(btn.style, {
+      position:'fixed', bottom:'16px', right:'16px', zIndex:'999999',
+      background:'#304f42', color:'#fdf8f2', border:'none', borderRadius:'6px',
+      padding:'7px 14px', fontFamily:'Jost,sans-serif', fontSize:'12px',
+      letterSpacing:'0.1em', cursor:'pointer', boxShadow:'0 2px 12px rgba(0,0,0,0.3)'
+    });
+    document.body.appendChild(btn);
+
+    // Panel
+    const panel = document.createElement('div');
+    Object.assign(panel.style, {
+      position:'fixed', bottom:'54px', right:'16px', zIndex:'999998',
+      background:'#1e3028', color:'#fdf8f2', borderRadius:'10px',
+      padding:'14px 16px', fontFamily:'Jost,sans-serif', fontSize:'12px',
+      boxShadow:'0 4px 24px rgba(0,0,0,0.5)', display:'none', minWidth:'230px'
+    });
+
+    breeds.forEach(breed => {
+      const row = document.createElement('div');
+      Object.assign(row.style, {display:'flex', alignItems:'center', gap:'8px', marginBottom:'8px'});
+
+      const lbl = document.createElement('span');
+      lbl.textContent = labels[breed];
+      Object.assign(lbl.style, {flex:'1', fontSize:'11px', color:'rgba(253,248,242,0.7)', letterSpacing:'0.05em'});
+
+      const minus = document.createElement('button');
+      minus.textContent = '−';
+      const plus = document.createElement('button');
+      plus.textContent = '+';
+      [minus, plus].forEach(b => Object.assign(b.style, {
+        background:'#304f42', color:'#fdf8f2', border:'none', borderRadius:'4px',
+        width:'24px', height:'24px', cursor:'pointer', fontSize:'14px', lineHeight:'1'
+      }));
+
+      const val = document.createElement('span');
+      val.textContent = offsets[breed];
+      Object.assign(val.style, {width:'36px', textAlign:'center', fontSize:'12px', color:'#a8d4b8'});
+
+      function update(delta) {
+        offsets[breed] += delta;
+        val.textContent = offsets[breed];
+        applyOffset(breed);
+      }
+
+      // Hold to repeat
+      let timer;
+      function startHold(delta) {
+        update(delta);
+        timer = setInterval(() => update(delta), 80);
+      }
+      function stopHold() { clearInterval(timer); }
+
+      minus.addEventListener('mousedown', () => startHold(-1));
+      plus.addEventListener('mousedown',  () => startHold(1));
+      [minus, plus].forEach(b => {
+        b.addEventListener('mouseup',    stopHold);
+        b.addEventListener('mouseleave', stopHold);
+      });
+
+      // Drag on the value label
+      let dragging = false, startY = 0, startVal = 0;
+      val.style.cursor = 'ns-resize';
+      val.addEventListener('mousedown', e => {
+        dragging = true; startY = e.clientY; startVal = offsets[breed];
+        e.preventDefault();
+      });
+      document.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        const delta = Math.round((startY - e.clientY) / 2);
+        offsets[breed] = startVal + delta;
+        val.textContent = offsets[breed];
+        applyOffset(breed);
+      });
+      document.addEventListener('mouseup', () => { dragging = false; });
+
+      row.append(lbl, minus, val, plus);
+      panel.appendChild(row);
+    });
+
+    // Copy button
+    const copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copy offsets';
+    Object.assign(copyBtn.style, {
+      marginTop:'6px', width:'100%', background:'#4e7d69', color:'#fdf8f2',
+      border:'none', borderRadius:'6px', padding:'7px', cursor:'pointer',
+      fontFamily:'Jost,sans-serif', fontSize:'11px', letterSpacing:'0.1em'
+    });
+    copyBtn.addEventListener('click', () => {
+      const lines = breeds.map(b => `    '${b}': ${offsets[b]},`).join('\n');
+      navigator.clipboard.writeText(`const OFFSETS = {\n${lines}\n  };`);
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => copyBtn.textContent = 'Copy offsets', 1500);
+    });
+    panel.appendChild(copyBtn);
+
+    document.body.appendChild(panel);
+
+    // Direct drag on rabbit images
+    let activeDrag = null;
+    breeds.forEach(breed => {
+      const img = document.querySelector(`.rabbit[data-breed="${breed}"] img.photo`);
+      if (!img) return;
+      img.addEventListener('mousedown', e => {
+        if (panel.style.display === 'none') return; // only when panel open
+        e.preventDefault();
+        e.stopPropagation();
+        activeDrag = { breed, startY: e.clientY, startVal: offsets[breed] };
+        img.style.cursor = 'grabbing';
+        document.body.style.userSelect = 'none';
+      });
+    });
+
+    document.addEventListener('mousemove', e => {
+      if (!activeDrag) return;
+      const delta = Math.round((activeDrag.startY - e.clientY));
+      offsets[activeDrag.breed] = activeDrag.startVal + delta;
+      // sync panel value display
+      const valEl = panel.querySelectorAll('span[style*="color: rgb(168"]');
+      // simpler: just re-render offset and find matching row
+      panel.querySelectorAll('div[style*="marginBottom"]').forEach((row, i) => {
+        if (breeds[i] === activeDrag.breed) {
+          const span = row.children[2];
+          if (span) span.textContent = offsets[activeDrag.breed];
+        }
+      });
+      applyOffset(activeDrag.breed);
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (!activeDrag) return;
+      const img = document.querySelector(`.rabbit[data-breed="${activeDrag.breed}"] img.photo`);
+      if (img) img.style.cursor = '';
+      document.body.style.userSelect = '';
+      activeDrag = null;
+    });
+
+    btn.addEventListener('click', () => {
+      const open = panel.style.display === 'none';
+      panel.style.display = open ? 'block' : 'none';
+      // show grab cursor on rabbits when panel is open
+      breeds.forEach(breed => {
+        const img = document.querySelector(`.rabbit[data-breed="${breed}"] img.photo`);
+        if (img) img.style.cursor = open ? 'grab' : '';
+      });
+    });
+  })();
 
   // ── return curtain ───────────────────────────────────
   const curtain = document.createElement('div');
