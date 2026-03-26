@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bunnies!</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234e7d69'/%3E%3C!-- left ear --%3E%3Cellipse cx='11' cy='9' rx='3' ry='6.5' fill='%23fdf8f2'/%3E%3Cellipse cx='11' cy='9.5' rx='1.5' ry='5' fill='%23d4a0a8'/%3E%3C!-- right ear --%3E%3Cellipse cx='21' cy='9' rx='3' ry='6.5' fill='%23fdf8f2'/%3E%3Cellipse cx='21' cy='9.5' rx='1.5' ry='5' fill='%23d4a0a8'/%3E%3C!-- head --%3E%3Cellipse cx='16' cy='21' rx='9' ry='8' fill='%23fdf8f2'/%3E%3C!-- eyes --%3E%3Ccircle cx='12.5' cy='20' r='1.4' fill='%23304f42'/%3E%3Ccircle cx='19.5' cy='20' r='1.4' fill='%23304f42'/%3E%3Ccircle cx='13' cy='19.5' r='0.4' fill='%23fff'/%3E%3Ccircle cx='20' cy='19.5' r='0.4' fill='%23fff'/%3E%3C!-- nose --%3E%3Cellipse cx='16' cy='23.5' rx='1.2' ry='0.8' fill='%23d4a0a8'/%3E%3C!-- mouth --%3E%3Cpath d='M14.5 24.3 Q16 25.5 17.5 24.3' stroke='%23b08090' stroke-width='0.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,400;1,700&family=Jost:wght@200;300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --sage-dk:   #304f42;
+      --sage:      #4e7d69;
+      --sage-lt:   #6a9b88;
+      --cream:     #f5ede0;
+      --parchment: #e8dcc8;
+      --warm-white: #fdf8f2;
+      --tan:       #c9a87c;
+    }
+
+    html { height: 100%; }
+    body {
+      background: var(--cream);
+      font-family: 'Jost', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero {
+      height: 100vh;
+      min-height: 580px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      /* Rich layered background: dark-to-mid sage with warm glow at bottom */
+      background:
+        radial-gradient(ellipse 90% 35% at 50% 108%, rgba(212,184,140,0.18) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 20% at 15% 95%, rgba(255,255,240,0.06) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 20% at 85% 95%, rgba(255,255,240,0.06) 0%, transparent 100%),
+        linear-gradient(168deg, #2b4639 0%, #3e6a56 28%, #4e7d69 55%, #528070 82%, #547a6c 100%);
+    }
+
+    /* Fine grain overlay */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.07;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Subtle bottom vignette — reinforces the ledge */
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 18%;
+      background: linear-gradient(to top, rgba(30,50,40,0.28) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* ── BOTANICAL DECORATIONS ────────────────────────── */
+    .b {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── TITLE ────────────────────────────────────────── */
+    .title-wrap {
+      position: relative;
+      z-index: 4;
+      text-align: center;
+      padding-top: clamp(2rem, 9vh, 6.5rem);
+      user-select: none;
+    }
+
+    .title-eyebrow {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: clamp(0.6rem, 0.9vw, 0.85rem);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(253,248,242,0.55);
+      margin-bottom: 0.6em;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: clamp(5.5rem, 17vw, 14rem);
+      color: var(--warm-white);
+      letter-spacing: -0.02em;
+      line-height: 0.9;
+    }
+
+    .title-rule {
+      margin: 1.1em auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.9em;
+      opacity: 0.4;
+    }
+    .title-rule span {
+      display: block;
+      height: 1px;
+      width: clamp(28px, 3.5vw, 52px);
+      background: var(--warm-white);
+    }
+    .title-rule svg {
+      width: 7px; height: 7px; flex-shrink: 0;
+    }
+
+    .title-subtitle {
+      margin-top: 1.15em;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: clamp(0.72rem, 1.05vw, 1rem);
+      letter-spacing: 0.12em;
+      color: rgba(253,248,242,0.62);
+      line-height: 1.7;
+    }
+    .title-subtitle em {
+      font-style: normal;
+      color: rgba(253,248,242,0.88);
+      font-weight: 300;
+    }
+
+    /* ── RABBIT ROW ───────────────────────────────────── */
+    .rabbit-row {
+      position: absolute;
+      bottom: 168px; /* ledge bottom (140) + ledge height (28) */
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 0 clamp(4px, 1vw, 20px);
+      z-index: 5;
+    }
+
+    .rabbit {
+      flex: 1 1 0;
+      min-width: 0;
+      position: relative;
+      cursor: pointer;
+
+      /* Entrance: rise from below */
+      opacity: 0;
+      transform: translateY(36px);
+      transition:
+        opacity  0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+        transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    .rabbit.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* pointer-events 只响应图片本身，div 上方空白区域不触发 */
+    .rabbit { pointer-events: none; }
+    .rabbit img.photo { pointer-events: auto; cursor: pointer; }
+
+    .rabbit.visible:has(img.photo:hover) { z-index: 20; }
+
+    /* 柔和光晕 — 沿兔子真实轮廓发光 */
+    .rabbit img.photo {
+      transition: filter 0.45s ease;
+    }
+    .rabbit.visible img.photo:hover {
+      filter: drop-shadow(0 0 18px rgba(255, 235, 160, 0.45))
+              drop-shadow(0 0 6px rgba(255, 220, 120, 0.25));
+    }
+
+    /* Breed label — top: 0 anchors to the top of the rabbit div (ear height).
+       All divs have the same top edge (they're flex items aligned at bottom),
+       so this naturally puts every label on the same horizontal line. */
+    .breed-label {
+      position: absolute;
+      top: 100%;
+      margin-top: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--warm-white);
+      font-family: 'Jost', sans-serif;
+      font-size: clamp(9px, 0.9vw, 13px);
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+      z-index: 30;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.55);
+    }
+
+    .rabbit.visible:has(img.photo:hover) .breed-label { opacity: 1; }
+
+    /* Photo */
+    .rabbit img.photo {
+      width: 100%;
+      height: clamp(260px, 54vh, 480px);
+      object-fit: contain;
+      object-position: bottom center;
+      display: block;
+    }
+
+    /* ── LEDGE ────────────────────────────────────────── */
+    /* Blends with the white studio surface in the rabbit images */
+    /* Cream base — fills hero bottom below the ledge, merges with .below */
+    .hero-base {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 148px; /* ledge-bottom (140px) + ledge-height (28px) = 168... keep a little sage show */
+      background: var(--cream);
+      z-index: 1;
+    }
+
+    .ledge {
+      position: absolute;
+      bottom: 140px;
+      left: 0;
+      right: 0;
+      height: 28px;
+      background: linear-gradient(to bottom,
+        #f4efe8 0%,
+        #ede5d8 55%,
+        #e0d5c4 100%
+      );
+      z-index: 4;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.07);
+    }
+
+    /* ── BELOW HERO ───────────────────────────────────── */
+    .below {
+      min-height: 35vh;
+      background: var(--cream);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 3.5rem;
+    }
+
+    .below-ornament {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      opacity: 0.28;
+    }
+    .below-ornament span {
+      display: block;
+      height: 1px;
+      width: 40px;
+      background: var(--sage-dk);
+    }
+    .below-ornament svg {
+      width: 9px; height: 9px;
+    }
+
+    /* ── BREED SECTIONS ──────────────────────────────── */
+    .breeds-wrap { background: var(--cream); }
+
+    .breed-section {
+      position: relative;
+      padding: clamp(5rem, 9vh, 8rem) clamp(2.5rem, 7vw, 8rem);
+      border-bottom: 1px solid rgba(100,130,110,0.1);
+      overflow: hidden;
+    }
+    .breed-section:nth-child(even) { background: var(--warm-white); }
+
+    .bs-inner {
+      display: flex;
+      align-items: center;
+      gap: clamp(3rem, 6vw, 8rem);
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .breed-section:nth-child(even) .bs-inner { flex-direction: row-reverse; }
+
+    /* photos column — 3-image grid */
+    .bs-photos {
+      flex: 0 0 46%;
+      display: grid;
+      grid-template-columns: 58% 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: clamp(0.55rem, 0.9vw, 0.9rem);
+      height: clamp(400px, 54vh, 560px);
+    }
+    @keyframes blob-breathe-a {
+      0%, 100% { border-radius: 46% 54% 44% 56% / 52% 46% 54% 48%; }
+      33%      { border-radius: 50% 50% 48% 52% / 48% 52% 50% 50%; }
+      66%      { border-radius: 44% 56% 52% 48% / 54% 44% 52% 46%; }
+    }
+    @keyframes blob-breathe-b {
+      0%, 100% { border-radius: 56% 44% 50% 50% / 44% 58% 42% 56%; }
+      40%      { border-radius: 50% 50% 44% 56% / 50% 50% 50% 50%; }
+      70%      { border-radius: 58% 42% 54% 46% / 42% 56% 44% 58%; }
+    }
+    @keyframes blob-breathe-c {
+      0%, 100% { border-radius: 44% 56% 56% 44% / 52% 44% 56% 48%; }
+      45%      { border-radius: 50% 50% 50% 50% / 48% 52% 48% 52%; }
+      80%      { border-radius: 46% 54% 52% 48% / 56% 46% 52% 48%; }
+    }
+
+    .bs-photo-a {
+      grid-row: 1 / 3;
+      border-radius: 46% 54% 44% 56% / 52% 46% 54% 48%;
+      overflow: hidden;
+      animation: blob-breathe-a 9s ease-in-out infinite;
+    }
+    .bs-photo-b {
+      border-radius: 56% 44% 50% 50% / 44% 58% 42% 56%;
+      overflow: hidden;
+      animation: blob-breathe-b 11s ease-in-out infinite 1.5s;
+    }
+    .bs-photo-c {
+      border-radius: 44% 56% 56% 44% / 52% 44% 56% 48%;
+      overflow: hidden;
+      animation: blob-breathe-c 13s ease-in-out infinite 0.8s;
+    }
+    .bs-photo-a img, .bs-photo-b img, .bs-photo-c img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center center;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    .bs-photo-a:hover img, .bs-photo-b:hover img, .bs-photo-c:hover img {
+      transform: scale(1.07);
+    }
+
+    /* ── 每种品种的泡泡配色 ─────────────────────────────── */
+    #section-flemish-giant .bs-photo-a { background: #b4c4cc; }
+    #section-flemish-giant .bs-photo-b { background: #9eb4c0; }
+    #section-flemish-giant .bs-photo-c { background: #c4d0d8; }
+
+    #section-lionhead .bs-photo-a { background: #d8c890; }
+    #section-lionhead .bs-photo-b { background: #e4d4a0; }
+    #section-lionhead .bs-photo-c { background: #ccb87c; }
+
+    #section-holland-lop .bs-photo-a { background: #d4bca8; }
+    #section-holland-lop .bs-photo-b { background: #e0ccb8; }
+    #section-holland-lop .bs-photo-c { background: #c8aa94; }
+
+    #section-angora .bs-photo-a { background: none; }   /* 用原图背景 */
+    #section-angora .bs-photo-b { background: #c4b8cc; }
+    #section-angora .bs-photo-c { background: none; }   /* 用原图背景 */
+
+    #section-harlequin .bs-photo-a { background: #c8b890; }
+    #section-harlequin .bs-photo-b { background: #d4c07c; }
+    #section-harlequin .bs-photo-c { background: #bcaa78; }
+
+    #section-netherland-dwarf .bs-photo-a { background: none; }   /* 用原图背景 */
+    #section-netherland-dwarf .bs-photo-b { background: #c4b8d4; }
+    #section-netherland-dwarf .bs-photo-c { background: #a8b4cc; }
+
+    /* info column */
+    .bs-info { flex: 1; position: relative; }
+
+    .bs-number {
+      position: absolute;
+      top: -0.4em; right: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(7rem, 12vw, 13rem);
+      font-weight: 700; font-style: italic;
+      color: var(--sage); opacity: 0.07;
+      line-height: 1;
+      user-select: none; pointer-events: none;
+    }
+    .bs-origin {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55em;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: clamp(0.58rem, 0.78vw, 0.72rem);
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 0.7em;
+    }
+    .bs-origin::before {
+      content: '';
+      display: block;
+      width: 20px; height: 1px;
+      background: var(--sage);
+    }
+    .bs-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-weight: 700;
+      font-size: clamp(2.6rem, 4.2vw, 4.8rem);
+      color: var(--sage-dk);
+      line-height: 0.88; letter-spacing: -0.02em;
+      margin-bottom: 0.95em;
+    }
+    .bs-tags {
+      display: flex; flex-wrap: wrap;
+      gap: 0.4em; margin-bottom: 1.8em;
+    }
+    .bs-tag {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.55rem, 0.68vw, 0.65rem);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--sage-dk);
+      border: 1px solid rgba(78,125,105,0.35);
+      padding: 0.22em 0.9em;
+      border-radius: 99px;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      cursor: default;
+    }
+    .bs-tag:hover {
+      background: rgba(78,125,105,0.1);
+      border-color: rgba(78,125,105,0.6);
+    }
+    .bs-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1em 2.5em;
+      margin-bottom: 1.8em;
+      padding-bottom: 1.8em;
+      border-bottom: 1px solid rgba(100,130,110,0.12);
+    }
+    .bstat { display: flex; flex-direction: column; gap: 0.18em; }
+    .bsl {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: 0.56rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--sage);
+    }
+    .bsv {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.8rem, 0.93vw, 0.9rem);
+      color: var(--sage-dk);
+    }
+    .bs-desc {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.78rem, 0.9vw, 0.9rem);
+      line-height: 1.78;
+      color: rgba(48,79,66,0.78);
+      max-width: 48ch;
+      margin-bottom: 1.6em;
+    }
+    .bs-fact {
+      padding-left: 1.1em;
+      border-left: 2px solid rgba(106,155,136,0.5);
+    }
+    .bs-fact-lbl {
+      display: block;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: 0.54rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 0.3em;
+    }
+    .bs-fact p {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-weight: 400;
+      font-size: clamp(0.88rem, 1.02vw, 1.02rem);
+      color: var(--sage-dk);
+      line-height: 1.55;
+    }
+    .bs-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55em;
+      margin-top: 2.4em;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--sage);
+      text-decoration: none;
+      opacity: 0.55;
+      transition: opacity 0.25s, gap 0.25s;
+    }
+    .bs-back:hover { opacity: 1; gap: 0.8em; }
+    .bs-back::before {
+      content: '↑';
+      display: inline-block;
+      transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    .bs-back:hover::before { transform: translateY(-3px); }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    .site-footer {
+      background: var(--cream);
+      padding: 3.5rem 2rem 3rem;
+      text-align: center;
+      border-top: 1px solid rgba(100,130,110,0.08);
+    }
+    .sf-rule {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8em;
+      color: var(--sage);
+      opacity: 0.3;
+      margin-bottom: 1.5rem;
+    }
+    .sf-rule span {
+      display: block;
+      width: clamp(24px, 3vw, 44px);
+      height: 1px;
+      background: currentColor;
+    }
+    .sf-rule svg {
+      width: 7px; height: 7px; flex-shrink: 0;
+    }
+    .sf-text {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0.55em;
+      margin-bottom: 0.55em;
+    }
+    .sf-year {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: clamp(0.6rem, 0.8vw, 0.72rem);
+      letter-spacing: 0.2em;
+      color: var(--sage);
+      opacity: 0.55;
+    }
+    .sf-sep {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      color: var(--sage);
+      opacity: 0.3;
+      font-size: 0.7rem;
+    }
+    .sf-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+      color: var(--sage-dk);
+      letter-spacing: 0.01em;
+    }
+    .sf-sub {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: clamp(0.52rem, 0.65vw, 0.6rem);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--sage);
+      opacity: 0.35;
+    }
+
+    /* ── RETURN CURTAIN ───────────────────────────────── */
+    #return-curtain {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      pointer-events: none;
+      /* Two layers: sage top half slides down, cream bottom half slides up */
+      background: linear-gradient(
+        to bottom,
+        var(--sage-dk) 50%,
+        var(--cream)   50%
+      );
+      transform: translateY(-100%);
+      will-change: transform;
+    }
+    #return-curtain.drop {
+      pointer-events: all;
+      animation: curtain-drop 0.55s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+    }
+    #return-curtain.lift {
+      transform: translateY(0);
+      animation: curtain-lift 0.6s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+    }
+    @keyframes curtain-drop {
+      from { transform: translateY(-100%); }
+      to   { transform: translateY(0);     }
+    }
+    @keyframes curtain-lift {
+      from { transform: translateY(0);    }
+      to   { transform: translateY(100%); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero" id="top">
+
+  <!-- ══ BOTANICAL LAYER ══════════════════════════════ -->
+
+  <!-- Large left branch with alternate leaves -->
+  <svg class="b" style="top:5%;left:1%;width:9%;opacity:0.18"
+    viewBox="0 0 100 160" fill="none" stroke="white" stroke-width="1.6"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M50,152 C50,110 50,60 50,6"/>
+    <path d="M50,128 C34,112 18,108 4,94"/>
+    <path d="M50,108 C66,92 78,88 90,74"/>
+    <path d="M50,84 C36,70 22,66 10,52"/>
+    <path d="M50,64 C64,50 74,46 84,32"/>
+    <path d="M50,40 C38,28 28,24 18,12"/>
+  </svg>
+
+  <!-- Tall right branch -->
+  <svg class="b" style="top:2%;right:2.5%;width:6%;opacity:0.16"
+    viewBox="0 0 80 140" fill="none" stroke="white" stroke-width="1.6"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40,132 C40,90 40,44 40,6"/>
+    <path d="M40,108 C28,94 16,88 6,74"/>
+    <path d="M40,84 C52,70 62,64 70,50"/>
+    <path d="M40,60 C30,48 20,42 10,28"/>
+    <path d="M40,38 C50,26 58,22 64,10"/>
+  </svg>
+
+  <!-- Right mid — single fern frond -->
+  <svg class="b" style="top:28%;right:4%;width:5%;opacity:0.14"
+    viewBox="0 0 60 100" fill="none" stroke="white" stroke-width="1.5"
+    stroke-linecap="round">
+    <path d="M30,94 C30,60 30,24 30,4"/>
+    <path d="M30,80 C20,70 10,62 4,50"/>
+    <path d="M30,64 C40,54 48,48 54,36"/>
+    <path d="M30,48 C22,40 14,34 8,22"/>
+    <path d="M30,34 C38,26 44,22 48,12"/>
+    <path d="M30,20 C24,14 18,10 14,4"/>
+  </svg>
+
+  <!-- Left mid — oval leaf -->
+  <svg class="b" style="top:36%;left:4%;width:4%;opacity:0.15"
+    viewBox="0 0 50 68" fill="none" stroke="white" stroke-width="1.6"
+    stroke-linecap="round">
+    <path d="M25,62 C25,38 25,14 25,4"/>
+    <path d="M25,38 Q8,26 4,10"/>
+    <path d="M25,38 Q42,26 46,10"/>
+    <ellipse cx="25" cy="34" rx="18" ry="26" stroke-width="1.4"/>
+  </svg>
+
+  <!-- Bottom-left trailing branch — overlaps rabbit row -->
+  <svg class="b" style="bottom:28%;left:0%;width:14%;opacity:0.12"
+    viewBox="0 0 160 80" fill="none" stroke="white" stroke-width="1.4"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4,76 C30,60 60,50 90,42 C118,34 140,24 156,6"/>
+    <path d="M60,56 C52,40 44,28 34,18"/>
+    <path d="M90,46 C90,30 88,18 82,6"/>
+    <path d="M120,36 C128,22 134,12 140,2"/>
+  </svg>
+
+  <!-- Bottom-right trailing branch -->
+  <svg class="b" style="bottom:24%;right:0%;width:13%;opacity:0.11"
+    viewBox="0 0 150 70" fill="none" stroke="white" stroke-width="1.4"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M146,68 C118,52 88,44 58,36 C32,28 14,18 4,4"/>
+    <path d="M92,48 C100,32 106,20 116,10"/>
+    <path d="M60,38 C60,22 62,10 68,2"/>
+  </svg>
+
+  <!-- Berry cluster — top right area -->
+  <svg class="b" style="top:18%;right:11%;width:3%;opacity:0.2"
+    viewBox="0 0 40 50" fill="none" stroke="white" stroke-width="1.4"
+    stroke-linecap="round">
+    <path d="M20,48 C20,38 20,28 20,10"/>
+    <path d="M20,22 C14,16 8,12 4,6"/>
+    <path d="M20,22 C26,16 32,12 36,6"/>
+    <circle cx="4" cy="5" r="3" fill="white" opacity="0.7"/>
+    <circle cx="36" cy="5" r="3" fill="white" opacity="0.7"/>
+    <circle cx="20" cy="9" r="3.5" fill="white" opacity="0.8"/>
+    <circle cx="12" cy="1" r="2.5" fill="white" opacity="0.5"/>
+    <circle cx="28" cy="1" r="2.5" fill="white" opacity="0.5"/>
+  </svg>
+
+  <!-- Berry cluster — left -->
+  <svg class="b" style="top:52%;left:8%;width:2.5%;opacity:0.18"
+    viewBox="0 0 36 44" fill="none" stroke="white" stroke-width="1.4"
+    stroke-linecap="round">
+    <path d="M18,42 C18,30 18,18 18,8"/>
+    <path d="M18,20 C12,14 7,10 3,4"/>
+    <path d="M18,20 C24,14 29,10 33,4"/>
+    <circle cx="3" cy="3" r="2.5" fill="white" opacity="0.7"/>
+    <circle cx="33" cy="3" r="2.5" fill="white" opacity="0.7"/>
+    <circle cx="18" cy="7" r="3" fill="white" opacity="0.8"/>
+  </svg>
+
+  <!-- Scattered plus marks -->
+  <svg class="b" style="top:14%;left:30%;width:1.5%;opacity:0.25"
+    viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+    <line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="10" x2="18" y2="10"/>
+  </svg>
+  <svg class="b" style="top:32%;right:16%;width:1.8%;opacity:0.22"
+    viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+    <line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="10" x2="18" y2="10"/>
+  </svg>
+  <svg class="b" style="top:8%;left:16%;width:1.2%;opacity:0.2"
+    viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+    <line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="10" x2="18" y2="10"/>
+  </svg>
+  <svg class="b" style="top:22%;left:46%;width:1%;opacity:0.18"
+    viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+    <line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="10" x2="18" y2="10"/>
+  </svg>
+  <svg class="b" style="top:44%;right:22%;width:1.3%;opacity:0.2"
+    viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+    <line x1="10" y1="2" x2="10" y2="18"/><line x1="2" y1="10" x2="18" y2="10"/>
+  </svg>
+
+  <!-- Small dot clusters -->
+  <svg class="b" style="top:20%;left:60%;width:2%;opacity:0.2"
+    viewBox="0 0 30 20" fill="white">
+    <circle cx="5" cy="10" r="2"/><circle cx="15" cy="5" r="1.5"/>
+    <circle cx="25" cy="12" r="2"/><circle cx="10" cy="16" r="1.5"/>
+    <circle cx="22" cy="3" r="1.5"/>
+  </svg>
+  <svg class="b" style="top:38%;left:22%;width:1.8%;opacity:0.18"
+    viewBox="0 0 26 18" fill="white">
+    <circle cx="4" cy="9" r="1.8"/><circle cx="13" cy="4" r="1.4"/>
+    <circle cx="22" cy="11" r="1.8"/><circle cx="9" cy="15" r="1.4"/>
+  </svg>
+
+  <!-- ══ TITLE ══════════════════════════════════════════ -->
+  <div class="title-wrap">
+    <p class="title-eyebrow">a garden of</p>
+    <h1>Bunnies!</h1>
+    <div class="title-rule">
+      <span></span>
+      <svg viewBox="0 0 7 7" fill="none" stroke="white" stroke-width="1.2">
+        <circle cx="3.5" cy="3.5" r="2.5"/>
+      </svg>
+      <span></span>
+    </div>
+    <p class="title-subtitle"><em>click. they love the attention.</em></p>
+  </div>
+
+  <!-- ══ RABBIT ROW ═════════════════════════════════════ -->
+  <div class="rabbit-row">
+
+    <div class="rabbit" data-breed="flemish-giant">
+      <div class="breed-label">Flemish Giant</div>
+      <img class="photo" src="assets/rabbits/flemish-giant.png" alt="Flemish Giant">
+    </div>
+
+    <div class="rabbit" data-breed="lionhead">
+      <div class="breed-label">Lionhead</div>
+      <img class="photo" src="assets/rabbits/lionhead.png" alt="Lionhead">
+    </div>
+
+    <div class="rabbit" data-breed="holland-lop">
+      <div class="breed-label">Holland Lop</div>
+      <img class="photo" src="assets/rabbits/holland-lop.png" alt="Holland Lop">
+    </div>
+
+    <div class="rabbit" data-breed="angora">
+      <div class="breed-label">Angora</div>
+      <img class="photo" src="assets/rabbits/angora.png" alt="Angora">
+    </div>
+
+    <div class="rabbit" data-breed="harlequin">
+      <div class="breed-label">Harlequin</div>
+      <img class="photo" src="assets/rabbits/harlequin.png" alt="Harlequin">
+    </div>
+
+    <div class="rabbit" data-breed="netherland-dwarf">
+      <div class="breed-label">Netherland Dwarf</div>
+      <img class="photo" src="assets/rabbits/netherland-dwarf.png" alt="Netherland Dwarf">
+    </div>
+
+  </div><!-- /.rabbit-row -->
+
+  <!-- Cream base below ledge -->
+  <div class="hero-base"></div>
+
+  <!-- Ledge accent line -->
+  <div class="ledge"></div>
+
+</div><!-- /.hero -->
+
+<div class="breeds-wrap">
+
+  <!-- 01 Flemish Giant -->
+  <section class="breed-section" id="section-flemish-giant">
+    <div class="bs-inner">
+      <div class="bs-photos">
+        <div class="bs-photo-a"><img src="assets/rabbits/flemish-giant-a.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-b"><img src="assets/rabbits/flemish-giant-b.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-c"><img src="assets/rabbits/flemish-giant-c.png" alt="" onerror="this.remove()"></div>
+      </div>
+      <div class="bs-info">
+        <div class="bs-number">01</div>
+        <p class="bs-origin">Belgium · 16th century</p>
+        <h2 class="bs-name">Flemish Giant</h2>
+        <div class="bs-tags">
+          <span class="bs-tag">Gentle</span>
+          <span class="bs-tag">Docile</span>
+          <span class="bs-tag">Loyal</span>
+        </div>
+        <div class="bs-stats">
+          <div class="bstat"><span class="bsl">weight</span><span class="bsv">6 – 10 kg</span></div>
+          <div class="bstat"><span class="bsl">lifespan</span><span class="bsv">5 – 8 years</span></div>
+          <div class="bstat"><span class="bsl">coat</span><span class="bsv">Short, dense</span></div>
+          <div class="bstat"><span class="bsl">care</span><span class="bsv">Moderate</span></div>
+        </div>
+        <p class="bs-desc">The undisputed king of rabbit breeds. Flemish Giants are remarkably mellow despite their size — patient with children, tolerant of handling, and surprisingly social. They need room to roam and thrive on companionship.</p>
+        <div class="bs-fact">
+          <span class="bs-fact-lbl">did you know</span>
+          <p>Their nickname is "the dog of the rabbit world" — they follow their owners around like a loyal pup.</p>
+        </div>
+        <a class="bs-back" href="#top">back to the garden</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 Lionhead -->
+  <section class="breed-section" id="section-lionhead">
+    <div class="bs-inner">
+      <div class="bs-photos">
+        <div class="bs-photo-a"><img src="assets/rabbits/lionhead-a.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-b"><img src="assets/rabbits/lionhead-b.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-c"><img src="assets/rabbits/lionhead-c.png" alt="" onerror="this.remove()"></div>
+      </div>
+      <div class="bs-info">
+        <div class="bs-number">02</div>
+        <p class="bs-origin">Belgium · 1990s</p>
+        <h2 class="bs-name">Lionhead</h2>
+        <div class="bs-tags">
+          <span class="bs-tag">Playful</span>
+          <span class="bs-tag">Bold</span>
+          <span class="bs-tag">Curious</span>
+        </div>
+        <div class="bs-stats">
+          <div class="bstat"><span class="bsl">weight</span><span class="bsv">1.3 – 1.7 kg</span></div>
+          <div class="bstat"><span class="bsl">lifespan</span><span class="bsv">7 – 10 years</span></div>
+          <div class="bstat"><span class="bsl">coat</span><span class="bsv">Long mane + short body</span></div>
+          <div class="bstat"><span class="bsl">care</span><span class="bsv">Daily grooming</span></div>
+        </div>
+        <p class="bs-desc">Small in stature, enormous in personality. The Lionhead's dramatic mane is the result of a single genetic mutation — and the attitude that comes with it is equally outsized. They love to explore, demand attention, and occasionally judge you.</p>
+        <div class="bs-fact">
+          <span class="bs-fact-lbl">did you know</span>
+          <p>A kitten needs two copies of the mane gene for a full mane. One copy only creates a "single mane" that thins with age.</p>
+        </div>
+        <a class="bs-back" href="#top">back to the garden</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 Holland Lop -->
+  <section class="breed-section" id="section-holland-lop">
+    <div class="bs-inner">
+      <div class="bs-photos">
+        <div class="bs-photo-a"><img src="assets/rabbits/holland-lop-a.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-b"><img src="assets/rabbits/holland-lop-b.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-c"><img src="assets/rabbits/holland-lop-c.png" alt="" onerror="this.remove()"></div>
+      </div>
+      <div class="bs-info">
+        <div class="bs-number">03</div>
+        <p class="bs-origin">Netherlands · 1950s</p>
+        <h2 class="bs-name">Holland Lop</h2>
+        <div class="bs-tags">
+          <span class="bs-tag">Affectionate</span>
+          <span class="bs-tag">Sociable</span>
+          <span class="bs-tag">Playful</span>
+        </div>
+        <div class="bs-stats">
+          <div class="bstat"><span class="bsl">weight</span><span class="bsv">up to 2 kg</span></div>
+          <div class="bstat"><span class="bsl">lifespan</span><span class="bsv">7 – 12 years</span></div>
+          <div class="bstat"><span class="bsl">coat</span><span class="bsv">Short, dense</span></div>
+          <div class="bstat"><span class="bsl">care</span><span class="bsv">Easy</span></div>
+        </div>
+        <p class="bs-desc">Consistently ranked the most popular pet rabbit in the world. Their oversized floppy ears and round puppy face are almost unfairly cute — matched by a warm, genuinely people-loving temperament that makes them easy to adore.</p>
+        <div class="bs-fact">
+          <span class="bs-fact-lbl">did you know</span>
+          <p>Bred by Dutch enthusiast Adriann de Cock in the 1950s by crossing French Lops with Netherland Dwarfs — an inspired combination.</p>
+        </div>
+        <a class="bs-back" href="#top">back to the garden</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 Angora -->
+  <section class="breed-section" id="section-angora">
+    <div class="bs-inner">
+      <div class="bs-photos">
+        <div class="bs-photo-a"><img src="assets/rabbits/angora-a.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-b"><img src="assets/rabbits/angora-b.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-c"><img src="assets/rabbits/angora-c.png" alt="" onerror="this.remove()"></div>
+      </div>
+      <div class="bs-info">
+        <div class="bs-number">04</div>
+        <p class="bs-origin">Ankara, Turkey · ancient breed</p>
+        <h2 class="bs-name">Angora</h2>
+        <div class="bs-tags">
+          <span class="bs-tag">Calm</span>
+          <span class="bs-tag">Gentle</span>
+          <span class="bs-tag">Patient</span>
+        </div>
+        <div class="bs-stats">
+          <div class="bstat"><span class="bsl">weight</span><span class="bsv">2 – 3.5 kg</span></div>
+          <div class="bstat"><span class="bsl">lifespan</span><span class="bsv">7 – 12 years</span></div>
+          <div class="bstat"><span class="bsl">coat</span><span class="bsv">Long wool, requires daily care</span></div>
+          <div class="bstat"><span class="bsl">care</span><span class="bsv">High — daily grooming</span></div>
+        </div>
+        <p class="bs-desc">A living cloud. The English Angora produces the finest, softest wool of any animal — up to 1 kg per year. Their zen-like temperament makes daily grooming sessions feel meditative. Just don't ever skip them.</p>
+        <div class="bs-fact">
+          <span class="bs-fact-lbl">did you know</span>
+          <p>Angora wool is seven times warmer than sheep wool, and was once reserved exclusively for royalty and the very wealthy.</p>
+        </div>
+        <a class="bs-back" href="#top">back to the garden</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 Harlequin -->
+  <section class="breed-section" id="section-harlequin">
+    <div class="bs-inner">
+      <div class="bs-photos">
+        <div class="bs-photo-a"><img src="assets/rabbits/harlequin-a.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-b"><img src="assets/rabbits/harlequin-b.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-c"><img src="assets/rabbits/harlequin-c.png" alt="" onerror="this.remove()"></div>
+      </div>
+      <div class="bs-info">
+        <div class="bs-number">05</div>
+        <p class="bs-origin">France · 1880s</p>
+        <h2 class="bs-name">Harlequin</h2>
+        <div class="bs-tags">
+          <span class="bs-tag">Playful</span>
+          <span class="bs-tag">Inquisitive</span>
+          <span class="bs-tag">Easygoing</span>
+        </div>
+        <div class="bs-stats">
+          <div class="bstat"><span class="bsl">weight</span><span class="bsv">2.5 – 3.5 kg</span></div>
+          <div class="bstat"><span class="bsl">lifespan</span><span class="bsv">5 – 8 years</span></div>
+          <div class="bstat"><span class="bsl">coat</span><span class="bsv">Short, low-maintenance</span></div>
+          <div class="bstat"><span class="bsl">care</span><span class="bsv">Easy</span></div>
+        </div>
+        <p class="bs-desc">A work of living art. Show judges specifically look for a perfect 50/50 bilateral color split — but Harlequins are too busy exploring and making you smile to care about symmetry.</p>
+        <div class="bs-fact">
+          <span class="bs-fact-lbl">did you know</span>
+          <p>No two Harlequins have identical markings. Each rabbit's pattern is as unique as a fingerprint.</p>
+        </div>
+        <a class="bs-back" href="#top">back to the garden</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 Netherland Dwarf -->
+  <section class="breed-section" id="section-netherland-dwarf">
+    <div class="bs-inner">
+      <div class="bs-photos">
+        <div class="bs-photo-a"><img src="assets/rabbits/netherland-dwarf-a.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-b"><img src="assets/rabbits/netherland-dwarf-b.png" alt="" onerror="this.remove()"></div>
+        <div class="bs-photo-c"><img src="assets/rabbits/netherland-dwarf-c.png" alt="" onerror="this.remove()"></div>
+      </div>
+      <div class="bs-info">
+        <div class="bs-number">06</div>
+        <p class="bs-origin">Netherlands · early 20th century</p>
+        <h2 class="bs-name">Netherland Dwarf</h2>
+        <div class="bs-tags">
+          <span class="bs-tag">Spirited</span>
+          <span class="bs-tag">Alert</span>
+          <span class="bs-tag">Independent</span>
+        </div>
+        <div class="bs-stats">
+          <div class="bstat"><span class="bsl">weight</span><span class="bsv">0.9 – 1.1 kg</span></div>
+          <div class="bstat"><span class="bsl">lifespan</span><span class="bsv">10 – 12 years</span></div>
+          <div class="bstat"><span class="bsl">coat</span><span class="bsv">Short, dense</span></div>
+          <div class="bstat"><span class="bsl">care</span><span class="bsv">Moderate</span></div>
+        </div>
+        <p class="bs-desc">The smallest recognized rabbit breed in the world — and one of the most opinionated. They carry a wild rabbit gene that makes them boldly disproportionate in personality to their size. Approach with respect.</p>
+        <div class="bs-fact">
+          <span class="bs-fact-lbl">did you know</span>
+          <p>Their compact jaw can cause dental issues. Despite their otherwise hardy constitution, regular vet checkups are essential.</p>
+        </div>
+        <a class="bs-back" href="#top">back to the garden</a>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /.breeds-wrap -->
+
+<footer class="site-footer">
+  <div class="sf-rule">
+    <span></span>
+    <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 1 L9 5 L5 9 L1 5 Z" stroke="currentColor" stroke-width="1" fill="none"/>
+    </svg>
+    <span></span>
+  </div>
+  <p class="sf-text">
+    <span class="sf-year">2026</span>
+    <span class="sf-sep">·</span>
+    <em class="sf-name">Jiazheng Tian</em>
+  </p>
+  <p class="sf-sub">a garden of bunnies</p>
+</footer>
+
+<script>
+  // 图片已预处理为透明 PNG，无需浏览器端去背景
+
+  // Staggered rise-from-below entrance
+  document.querySelectorAll('.rabbit').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), 300 + i * 90);
+  });
+
+  // 各品种垂直对齐偏移（调整完成后固定值）
+  const OFFSETS = {
+    'flemish-giant':    -31,
+    'lionhead':         -36,
+    'holland-lop':      -51,
+    'angora':           -49,
+    'harlequin':        -46,
+    'netherland-dwarf': -29,
+  };
+  document.querySelectorAll('.rabbit').forEach(el => {
+    el.style.setProperty('--align-offset', `${OFFSETS[el.dataset.breed] ?? 0}px`);
+  });
+
+  // ── return curtain ───────────────────────────────────
+  const curtain = document.createElement('div');
+  curtain.id = 'return-curtain';
+  document.body.appendChild(curtain);
+
+  document.querySelectorAll('.bs-back').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      curtain.className = 'drop';
+      curtain.addEventListener('animationend', function onDrop() {
+        curtain.removeEventListener('animationend', onDrop);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        // Small pause at full coverage so the cut isn't jarring
+        setTimeout(() => {
+          curtain.className = 'lift';
+          curtain.addEventListener('animationend', function onLift() {
+            curtain.removeEventListener('animationend', onLift);
+            curtain.className = '';
+          }, { once: true });
+        }, 120);
+      }, { once: true });
+    });
+  });
+
+  // ── 点击兔子 → 滚动到品种详情 ──────────────────────────
+  document.querySelectorAll('.rabbit img.photo').forEach(img => {
+    img.addEventListener('click', () => {
+      const breed = img.closest('.rabbit').dataset.breed;
+      const target = document.getElementById('section-' + breed);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // ── 品种区块入场动画 ──────────────────────────────────
+  const breedSections = document.querySelectorAll('.breed-section');
+  breedSections.forEach(s => {
+    const photos = s.querySelector('.bs-photos');
+    const info = s.querySelector('.bs-info');
+    const isEven = s.matches(':nth-child(even)');
+    // Photos slide in from their side, info from the other
+    if (photos) {
+      photos.style.opacity = '0';
+      photos.style.transform = `translateX(${isEven ? '28px' : '-28px'})`;
+      photos.style.transition = 'opacity 0.8s cubic-bezier(0.22,0.61,0.36,1), transform 0.8s cubic-bezier(0.22,0.61,0.36,1)';
+    }
+    if (info) {
+      info.style.opacity = '0';
+      info.style.transform = `translateX(${isEven ? '-22px' : '22px'})`;
+      info.style.transition = 'opacity 0.8s cubic-bezier(0.22,0.61,0.36,1) 0.1s, transform 0.8s cubic-bezier(0.22,0.61,0.36,1) 0.1s';
+    }
+  });
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const photos = e.target.querySelector('.bs-photos');
+        const info = e.target.querySelector('.bs-info');
+        if (photos) { photos.style.opacity = '1'; photos.style.transform = 'translateX(0)'; }
+        if (info)   { info.style.opacity = '1';   info.style.transform = 'translateX(0)'; }
+        revealObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  breedSections.forEach(s => revealObserver.observe(s));
+</script>
+
+<style>
+  .rabbit { --align-offset: 0px; --rabbit-scale: 1; }
+  .rabbit img.photo { transform: scale(var(--rabbit-scale)) translateY(calc(-1 * var(--align-offset))); }
+  .rabbit[data-breed="lionhead"] { --rabbit-scale: 1.14; }
+</style>
+
+</body>
+</html>

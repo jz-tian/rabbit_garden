@@ -1,0 +1,12 @@
+node_modules/
+.env
+.DS_Store
+
+# Test/scratch scripts
+test-*.mjs
+gen-sketch-test.mjs
+test-imgs/
+
+# Build artifacts
+*.tmp
+.superpowers/
